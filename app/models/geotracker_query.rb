@@ -1,22 +1,21 @@
 # app/models/geotracker_query.rb
 
-require_dependency 'redmine/security'
-
 class GeotrackerQuery
-    include Redmine::Security
+  include ApplicationHelper
+  include QueriesHelper
   
-    attr_accessor :project, :user, :filters, :group_by, :column_names, :totalable_names
-    attr_reader :errors
-  
-    def initialize(attributes=nil)
-      @filters = {}
-      @group_by = nil
-      @column_names = []
-      @totalable_names = []
-      @errors = {}
-      
-      set_attributes(attributes) if attributes
-    end
+  attr_accessor :project, :user, :filters, :group_by, :column_names, :totalable_names
+  attr_reader :errors
+
+  def initialize(attributes=nil)
+    @filters = {}
+    @group_by = nil
+    @column_names = []
+    @totalable_names = []
+    @errors = {}
+    
+    set_attributes(attributes) if attributes
+  end
   
     def locations(options={})
       order_option = [group_by_sort_order, options[:order]].flatten.reject(&:blank?)
@@ -120,6 +119,13 @@ class GeotrackerQuery
     end
   
     private
+    def set_attributes(attributes)
+      return unless attributes
+  
+      attributes.each do |key, value|
+        send("#{key}=", value) if respond_to?("#{key}=")
+      end
+    end
   
     def radius_search_clause(lat, lng, radius)
       "ST_DWithin(coordinates::geography, ST_SetSRID(ST_MakePoint(#{lng}, #{lat}), 4326)::geography, #{radius})"

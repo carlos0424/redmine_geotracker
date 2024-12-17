@@ -1,6 +1,11 @@
 # init.rb
 require 'redmine'
 
+Rails.application.config.to_prepare do
+  require_dependency 'application_helper'
+  require_dependency 'queries_helper'
+end
+
 Redmine::Plugin.register :redmine_geotracker do
   name 'Redmine GeoTracker'
   author 'Carlos Arbelaez'
