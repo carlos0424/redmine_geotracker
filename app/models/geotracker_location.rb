@@ -1,63 +1,30 @@
 # app/models/geotracker_location.rb
 
 class GeotrackerLocation < ActiveRecord::Base
-    # Asociaciones con modelos de Redmine
-    belongs_to :project   # Proyecto asociado
-    belongs_to :issue    # Issue asociado
-    belongs_to :user     # Usuario que creó el registro
-    
-    # Validaciones
-    validates :coordinates, presence: true
-    validates :project_id, presence: true
-    validates :user_id, presence: true
-    
-    # Enums para estados
-    enum status: {
-      pending: 'pending',       # Pendiente de verificación
-      verified: 'verified',     # Verificado
-      invalid: 'invalid',       # Marcado como inválido
-      archived: 'archived'      # Archivado
-    }
-    
-    # Scopes para consultas comunes
-    scope :recent, -> { order(created_at: :desc) }
-    scope :by_project, ->(project_id) { where(project_id: project_id) }
-    scope :by_issue, ->(issue_id) { where(issue_id: issue_id) }
-    scope :by_user, ->(user_id) { where(user_id: user_id) }
-    scope :within_bounds, ->(sw_lat, sw_lng, ne_lat, ne_lng) {
-      where("ST_Within(coordinates, ST_MakeEnvelope(?, ?, ?, ?, 4326))",
-            sw_lng, sw_lat, ne_lng, ne_lat)
-    }
-    
-    # Callbacks
-    before_save :set_synchronized_at, if: :coordinates_changed?
-    after_create :notify_related_users
-    
-    # Métodos de instancia
-    
-    # Obtiene la distancia a otro punto en metros
-    def distance_to(lat, lng)
-      query = "SELECT ST_Distance(
-        coordinates::geography,
-        ST_SetSRID(ST_MakePoint(#{lng}, #{lat}), 4326)::geography
-      )"
-      self.class.connection.execute(query).first['st_distance']
-    end
-    
-    # Verifica si el punto está dentro de un radio dado
-    def within_radius?(lat, lng, radius_meters)
-      distance_to(lat, lng) <= radius_meters
-    end
-    
-    private
-    
-    # Actualiza el timestamp de sincronización
-    def set_synchronized_at
-      self.synchronized_at = Time.current
-    end
-    
-    # Notifica a usuarios relacionados sobre el nuevo registro
-    def notify_related_users
-      # TODO: Implementar sistema de notificaciones
-    end
+  belongs_to :project
+  belongs_to :issue, optional: true
+  belongs_to :user
+
+  validates :project, presence: true
+  validates :user, presence: true
+  validates :latitude, presence: true, 
+            numericality: { greater_than_or_equal_to: -90, less_than_or_equal_to: 90 }
+  validates :longitude, presence: true, 
+            numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
+
+  scope :active, -> { where(status: 'active') }
+  scope :by_project, ->(project_id) { where(project_id: project_id) }
+  scope :by_user, ->(user_id) { where(user_id: user_id) }
+  scope :by_issue, ->(issue_id) { where(issue_id: issue_id) }
+  scope :recent, -> { order(created_at: :desc) }
+
+  def self.within_bounds(sw_lat, sw_lng, ne_lat, ne_lng)
+    where("ST_Within(geom, ST_MakeEnvelope(?, ?, ?, ?, 4326))",
+          sw_lng, sw_lat, ne_lng, ne_lat)
   end
+
+  def self.near(lat, lng, distance_in_meters)
+    where("ST_DWithin(geom::geography, ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography, ?)",
+          lng, lat, distance_in_meters)
+  end
+end
