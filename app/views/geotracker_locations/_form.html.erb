@@ -1,0 +1,77 @@
+# app/views/geotracker_locations/_form.html.erb
+
+<%= form_for [@project, @location] do |f| %>
+    <%= error_messages_for @location %>
+  
+    <div class="box">
+      <p>
+        <%= f.label :issue_id, l(:field_issue) %>
+        <%= f.select :issue_id,
+                     @project.issues.open.collect {|i| ["##{i.id} - #{i.subject}", i.id]},
+                     { include_blank: true },
+                     { class: 'select2' } %>
+      </p>
+  
+      <div class="splitcontent">
+        <div class="splitcontentleft">
+          <p>
+            <%= f.label :coordinates, l(:field_coordinates) %>
+            <span class="coordinates-display">
+              <%= format_coordinates(@location.coordinates) if @location.coordinates %>
+            </span>
+            <%= hidden_field_tag 'geotracker_location[lat]', '', id: 'location_lat' %>
+            <%= hidden_field_tag 'geotracker_location[lng]', '', id: 'location_lng' %>
+          </p>
+  
+          <p>
+            <%= f.label :accuracy, l(:field_accuracy) %>
+            <%= f.text_field :accuracy, size: 10 %> m
+          </p>
+        </div>
+  
+        <div class="splitcontentright">
+          <div id="location-picker-map" style="height: 300px;"></div>
+        </div>
+      </div>
+  
+      <p>
+        <%= f.label :notes, l(:field_notes) %>
+        <%= f.text_area :notes, rows: 5, class: 'wiki-edit' %>
+      </p>
+  
+      <p>
+        <%= f.label :status, l(:field_status) %>
+        <%= f.select :status, location_status_options %>
+      </p>
+  
+      <% if @location.metadata.present? %>
+        <fieldset class="collapsible">
+          <legend onclick="toggleFieldset(this);"><%= l(:label_metadata) %></legend>
+          <div style="display: none;">
+            <%= render partial: 'metadata', locals: { metadata: @location.metadata } %>
+          </div>
+        </fieldset>
+      <% end %>
+    </div>
+  
+    <%= submit_tag l(@location.new_record? ? :button_create : :button_save) %>
+  <% end %>
+  
+  <% content_for :header_tags do %>
+    <%= javascript_include_tag 'location_form', plugin: 'redmine_geotracker' %>
+  <% end %>
+  
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var map = GeoTracker.initLocationPicker('location-picker-map');
+    
+    <% if @location.coordinates.present? %>
+      GeoTracker.setMarkerPosition(map, <%= @location.coordinates.y %>, <%= @location.coordinates.x %>);
+    <% else %>
+      // Intentar obtener la ubicación actual
+      GeoTracker.getCurrentPosition(function(position) {
+        GeoTracker.setMarkerPosition(map, position.lat, position.lng);
+      });
+    <% end %>
+  });
+  </script>

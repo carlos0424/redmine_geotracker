@@ -1,0 +1,57 @@
+# app/views/geotracker_mailer/location_update_notification.html.erb
+
+<h1><%= l(:mail_subject_location_update, project: @project.name, user: @user.name) %></h1>
+
+<p><%= l(:text_location_updated_by, user: link_to_user(@user)) %></p>
+
+<ul>
+  <li><%= l(:field_created_on) %>: <%= format_time(@location.created_at) %></li>
+  <li><%= l(:field_coordinates) %>: <%= format_coordinates(@location.coordinates) %></li>
+  <% if @location.issue %>
+    <li><%= l(:field_issue) %>: <%= link_to_issue(@location.issue) %></li>
+  <% end %>
+  <% if @location.notes.present? %>
+    <li><%= l(:field_notes) %>: <%= textilizable(@location.notes) %></li>
+  <% end %>
+</ul>
+
+<p>
+  <%= l(:text_view_location_details) %>:<br/>
+  <%= link_to @url, @url %>
+</p>
+
+# app/views/geotracker_mailer/daily_location_summary.html.erb
+
+<h1><%= l(:mail_subject_daily_location_summary, project: @project.name, count: @locations.count) %></h1>
+
+<p><%= l(:text_location_summary_description) %></p>
+
+<table>
+  <thead>
+    <tr>
+      <th><%= l(:field_user) %></th>
+      <th><%= l(:field_created_on) %></th>
+      <th><%= l(:field_issue) %></th>
+      <th><%= l(:field_coordinates) %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @locations.each do |location| %>
+      <tr>
+        <td><%= location.user.name %></td>
+        <td><%= format_time(location.created_at) %></td>
+        <td>
+          <% if location.issue %>
+            <%= link_to_issue(location.issue) %>
+          <% end %>
+        </td>
+        <td><%= format_coordinates(location.coordinates) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<p>
+  <%= l(:text_view_all_locations) %>:<br/>
+  <%= link_to @url, @url %>
+</p>

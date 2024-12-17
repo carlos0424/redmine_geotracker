@@ -1,0 +1,108 @@
+/* app/assets/stylesheets/geotracker.css */
+
+/* Estilos del contenedor del mapa */
+.geotracker-map-container {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 10px 0;
+    position: relative;
+  }
+  
+  #locations-map {
+    min-height: 600px;
+    width: 100%;
+    z-index: 1;
+  }
+  
+  /* Estilos para la tabla de ubicaciones */
+  .list.locations tr.highlighted {
+    background-color: #fffbdc;
+  }
+  
+  .list.locations td.coordinates {
+    font-family: monospace;
+    white-space: nowrap;
+  }
+  
+  /* Controles del mapa */
+  .map-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  /* Estilos para los marcadores y popups */
+  .location-popup {
+    padding: 10px;
+  }
+  
+  .location-popup h4 {
+    margin: 0 0 10px 0;
+    color: #2996cc;
+  }
+  
+  .location-popup-metadata {
+    font-size: 0.9em;
+    color: #666;
+  }
+  
+  /* Estilos para los filtros */
+  .geotracker-filters {
+    background: #f6f6f6;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
+  
+  .geotracker-filters .fields-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+  }
+  
+  /* Estilos para los botones de acción */
+  .geotracker-actions {
+    margin: 10px 0;
+  }
+  
+  .geotracker-button {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-right: 5px;
+    background: #2996cc;
+    color: white;
+    border-radius: 3px;
+    text-decoration: none;
+  }
+  
+  .geotracker-button:hover {
+    background: #247aa7;
+    text-decoration: none;
+  }
+  
+  /* Responsive design */
+  @media screen and (max-width: 768px) {
+    .splitcontent {
+      display: block;
+    }
+    
+    .splitcontentleft,
+    .splitcontentright {
+      width: 100%;
+      margin: 0;
+    }
+    
+    #locations-map {
+      min-height: 400px;
+    }
+    
+    .geotracker-filters .fields-row {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }

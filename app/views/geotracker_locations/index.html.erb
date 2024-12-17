@@ -1,0 +1,81 @@
+# app/views/geotracker_locations/index.html.erb
+
+<% html_title l(:label_geotracker_locations) %>
+
+<div class="contextual">
+  <%= link_to l(:label_location_new), 
+              new_project_geotracker_location_path(@project),
+              class: 'icon icon-add' if User.current.allowed_to?(:manage_locations, @project) %>
+</div>
+
+<h2><%= l(:label_geotracker_locations) %></h2>
+
+<div class="splitcontent">
+  <div class="splitcontentleft">
+    <%= form_tag(project_geotracker_locations_path(@project), method: :get, id: 'query_form') do %>
+      <fieldset>
+        <legend><%= l(:label_filter_plural) %></legend>
+        <div class="filters">
+          <div class="field">
+            <%= label_tag :user_id, l(:field_user) %>
+            <%= select_tag :user_id, 
+                          options_from_collection_for_select(User.active, :id, :name, params[:user_id]),
+                          include_blank: true %>
+          </div>
+          <div class="field">
+            <%= label_tag :start_date, l(:field_start_date) %>
+            <%= date_field_tag :start_date, params[:start_date] %>
+          </div>
+          <div class="field">
+            <%= label_tag :end_date, l(:field_end_date) %>
+            <%= date_field_tag :end_date, params[:end_date] %>
+          </div>
+        </div>
+        <%= submit_tag l(:button_apply), name: nil, class: 'button-small' %>
+      </fieldset>
+    <% end %>
+
+    <div class="autoscroll">
+      <table class="list locations">
+        <thead>
+          <tr>
+            <th><%= l(:field_user) %></th>
+            <th><%= l(:field_issue) %></th>
+            <th><%= l(:field_coordinates) %></th>
+            <th><%= l(:field_created_on) %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @locations.each do |location| %>
+            <tr class="<%= cycle('odd', 'even') %>">
+              <td class="user"><%= link_to_user(location.user) %></td>
+              <td class="issue">
+                <%= link_to_issue(location.issue) if location.issue %>
+              </td>
+              <td class="coordinates">
+                <%= format_coordinates(location.coordinates) %>
+              </td>
+              <td class="created_on"><%= format_time(location.created_at) %></td>
+              <td class="buttons">
+                <%= link_to l(:button_edit),
+                          edit_geotracker_location_path(location),
+                          class: 'icon icon-edit' if User.current.allowed_to?(:manage_locations, @project) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="splitcontentright">
+    <div id="locations-map" style="height: 600px;"></div>
+  </div>
+</div>
+
+<% content_for :header_tags do %>
+  <%= stylesheet_link_tag 'leaflet', plugin: 'redmine_geotracker' %>
+  <%= javascript_include_tag 'leaflet', plugin: 'redmine_geotracker' %>
+  <%= javascript_include_tag 'geotracker', plugin: 'redmine_geotracker' %>
+<% end %>

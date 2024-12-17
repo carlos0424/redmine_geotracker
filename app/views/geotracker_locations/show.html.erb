@@ -1,0 +1,113 @@
+# app/views/geotracker_settings/show.html.erb
+
+<h2><%= l(:label_geotracker_settings) %></h2>
+
+<%= form_tag plugin_settings_path(@plugin), method: :put do %>
+  <div class="box tabular settings">
+    <p>
+      <label><%= l(:label_update_interval) %></label>
+      <%= number_field_tag 'settings[default_update_interval]',
+                          @settings[:default_update_interval],
+                          min: 10,
+                          max: 3600,
+                          step: 10 %> <%= l(:label_seconds) %>
+    </p>
+    
+    <p>
+      <label><%= l(:label_minimum_accuracy) %></label>
+      <%= number_field_tag 'settings[minimum_accuracy]',
+                          @settings[:minimum_accuracy],
+                          min: 0,
+                          max: 1000 %> <%= l(:label_meters) %>
+    </p>
+    
+    <p>
+      <label><%= l(:label_retention_period) %></label>
+      <%= number_field_tag 'settings[retention_period]',
+                          @settings[:retention_period],
+                          min: 1,
+                          max: 365 %> <%= l(:label_days) %>
+    </p>
+    
+    <p>
+      <label><%= l(:label_max_locations_user) %></label>
+      <%= number_field_tag 'settings[max_locations_per_user]',
+                          @settings[:max_locations_per_user],
+                          min: 100,
+                          max: 10000 %>
+    </p>
+    
+    <fieldset class="box">
+      <legend><%= l(:label_tracking_schedule) %></legend>
+      <div class="tracking-schedule">
+        <p>
+          <label><%= l(:label_start_time) %></label>
+          <%= time_field_tag 'settings[tracking_schedule][start_time]',
+                            @settings[:tracking_schedule][:start_time] %>
+        </p>
+        <p>
+          <label><%= l(:label_end_time) %></label>
+          <%= time_field_tag 'settings[tracking_schedule][end_time]',
+                            @settings[:tracking_schedule][:end_time] %>
+        </p>
+        <p>
+          <label><%= l(:label_tracking_days) %></label>
+          <% Date::DAYNAMES.each_with_index do |day, i| %>
+            <label class="inline">
+              <%= check_box_tag "settings[tracking_schedule][days][]",
+                              i,
+                              @settings[:tracking_schedule][:days].include?(i.to_s) %>
+              <%= day %>
+            </label>
+          <% end %>
+        </p>
+      </div>
+    </fieldset>
+    
+    <fieldset class="box">
+      <legend><%= l(:label_notifications) %></legend>
+      <div class="notification-roles">
+        <% Role.sorted.each do |role| %>
+          <label class="inline">
+            <%= check_box_tag "settings[notification_roles][]",
+                            role.id,
+                            @settings[:notification_roles].include?(role.id.to_s) %>
+            <%= role.name %>
+          </label>
+        <% end %>
+      </div>
+    </fieldset>
+    
+    <fieldset class="box">
+      <legend><%= l(:label_tracking_options) %></legend>
+      <p>
+        <label class="inline">
+          <%= check_box_tag 'settings[enable_real_time_tracking]',
+                          1,
+                          @settings[:enable_real_time_tracking] %>
+          <%= l(:label_enable_real_time_tracking) %>
+        </label>
+      </p>
+      <p>
+        <label class="inline">
+          <%= check_box_tag 'settings[track_battery_level]',
+                          1,
+                          @settings[:track_battery_level] %>
+          <%= l(:label_track_battery_level) %>
+        </label>
+      </p>
+      <p>
+        <label class="inline">
+          <%= check_box_tag 'settings[track_network_status]',
+                          1,
+                          @settings[:track_network_status] %>
+          <%= l(:label_track_network_status) %>
+        </label>
+      </p>
+    </fieldset>
+  </div>
+  
+  <%= submit_tag l(:button_save) %>
+<% end %>
+
+<% html_title l(:label_geotracker_settings) %>

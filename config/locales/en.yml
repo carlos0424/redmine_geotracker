@@ -1,0 +1,35 @@
+# config/locales/en.yml
+
+en:
+  label_geotracker: "GeoTracker"
+  label_geotracker_locations: "Locations"
+  label_location_new: "New Location"
+  label_location_edit: "Edit Location"
+  label_location_view: "View Location"
+  
+  field_coordinates: "Coordinates"
+  field_accuracy: "Accuracy"
+  field_altitude: "Altitude"
+  field_speed: "Speed"
+  field_battery_level: "Battery Level"
+  field_connection_type: "Connection Type"
+  
+  location_status_active: "Active"
+  location_status_verified: "Verified"
+  location_status_invalid: "Invalid"
+  location_status_archived: "Archived"
+  
+  notice_location_created: "Location was successfully created."
+  notice_location_updated: "Location was successfully updated."
+  notice_location_deleted: "Location was successfully deleted."
+  
+  error_location_not_found: "Location was not found."
+  error_location_create: "Error creating location."
+  error_location_update: "Error updating location."
+  error_location_delete: "Error deleting location."
+  
+  permission_view_locations: "View locations"
+  permission_manage_locations: "Manage locations"
+  permission_delete_locations: "Delete locations"
+  
+  text_location_description: "Location tracking and management"

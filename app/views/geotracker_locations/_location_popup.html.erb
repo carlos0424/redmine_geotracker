@@ -1,0 +1,59 @@
+# app/views/geotracker_locations/_location_popup.html.erb
+
+<div class="location-popup">
+  <h4>
+    <%= link_to location_title(location), 
+                project_geotracker_location_path(@project, location) %>
+  </h4>
+  
+  <div class="location-popup-metadata">
+    <p>
+      <strong><%= l(:field_user) %>:</strong>
+      <%= link_to_user(location.user) %>
+    </p>
+    
+    <% if location.issue %>
+      <p>
+        <strong><%= l(:field_issue) %>:</strong>
+        <%= link_to_issue(location.issue) %>
+      </p>
+    <% end %>
+    
+    <p>
+      <strong><%= l(:field_coordinates) %>:</strong>
+      <%= format_coordinates(location.coordinates) %>
+    </p>
+    
+    <% if location.accuracy.present? %>
+      <p>
+        <strong><%= l(:field_accuracy) %>:</strong>
+        <%= number_with_precision(location.accuracy, precision: 2) %> m
+      </p>
+    <% end %>
+    
+    <p>
+      <strong><%= l(:field_created_on) %>:</strong>
+      <%= format_time(location.created_at) %>
+    </p>
+    
+    <% if location.notes.present? %>
+      <p>
+        <strong><%= l(:field_notes) %>:</strong>
+        <%= textilizable(location.notes) %>
+      </p>
+    <% end %>
+  </div>
+
+  <% if User.current.allowed_to?(:manage_locations, @project) %>
+    <div class="contextual">
+      <%= link_to l(:button_edit), 
+                  edit_project_geotracker_location_path(@project, location),
+                  class: 'icon icon-edit' %>
+      <%= link_to l(:button_delete), 
+                  project_geotracker_location_path(@project, location),
+                  method: :delete,
+                  data: { confirm: l(:text_are_you_sure) },
+                  class: 'icon icon-del' %>
+    </div>
+  <% end %>
+</div>
