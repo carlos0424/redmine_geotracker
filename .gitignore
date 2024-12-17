@@ -1,0 +1,8 @@
+*.log
+.DS_Store
+*.sqlite3
+*.sqlite3-journal
+tmp/
+.sass-cache/
+*.swp
+*.swo
