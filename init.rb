@@ -13,11 +13,7 @@ Redmine::Plugin.register :redmine_geotracker do
   version '0.0.1'
 
   project_module :geotracker do
-    permission :view_locations, { geotracker_locations: [:index, :show] }, public: true
-    permission :manage_locations, { geotracker_locations: [:new, :create, :edit, :update, :destroy] }
+    permission :view_locations, { geotracker_locations: [:index, :show] }
+    permission :manage_locations, { geotracker_locations: [:new, :create, :edit, :update] }
   end
-
-  menu :project_menu, :geotracker_locations, 
-       { controller: 'geotracker_locations', action: 'index' }, 
-       caption: 'Geo Tracker', after: :activity, param: :project_id
 end

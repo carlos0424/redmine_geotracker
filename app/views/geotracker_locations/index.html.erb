@@ -74,25 +74,6 @@
   </div>
 </div>
 
-
-<h2>Ubicaciones Recientes</h2>
-<div id="map" style="height: 500px;"></div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var map = L.map('map').setView([0, 0], 2);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18
-    }).addTo(map);
-
-    // Cargar ubicaciones
-    <% @locations.each do |loc| %>
-      L.marker([<%= loc.latitude %>, <%= loc.longitude %>]).addTo(map)
-       .bindPopup("Usuario: <%= loc.user.name %> <br> Proyecto: <%= loc.project.name %>");
-    <% end %>
-  });
-</script>
-
 <% content_for :header_tags do %>
   <%= stylesheet_link_tag 'leaflet', plugin: 'redmine_geotracker' %>
   <%= javascript_include_tag 'leaflet', plugin: 'redmine_geotracker' %>
