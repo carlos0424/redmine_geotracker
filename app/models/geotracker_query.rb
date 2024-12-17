@@ -1,5 +1,7 @@
 # app/models/geotracker_query.rb
 
+require_dependency 'redmine/security'
+
 class GeotrackerQuery
     include Redmine::Security
   
